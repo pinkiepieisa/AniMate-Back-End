@@ -1,13 +1,13 @@
-package com.server.websocket;
+package com.animate.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringWebsocketApplication {
+public class BackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringWebsocketApplication.class, args);
+		SpringApplication.run(BackendApplication.class, args);
 	}
 
 }

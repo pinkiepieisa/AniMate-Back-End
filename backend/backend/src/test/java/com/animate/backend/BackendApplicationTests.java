@@ -1,10 +1,10 @@
-package com.server.websocket;
+package com.animate.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringWebsocketApplicationTests {
+class BackendApplicationTests {
 
 	@Test
 	void contextLoads() {
