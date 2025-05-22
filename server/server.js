@@ -19,7 +19,7 @@ const io = new Server(server, {
 
 //Usuário conectado
 io.on('connection', (socket) => {
-    console.log('Usuário conectado!');
+    console.log('Usuário conectado: ', socket.id);
 
     //Para a conexão com a canvas
     socket.on('draw', (data) => {
@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
 
     //Usuário desconectado
     socket.on('disconnect', () => {
-        console.log('Usuário desconectado!');
+        console.log('Usuário desconectado: ', socket.id);
     });
 });
 
