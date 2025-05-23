@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:15.4-alpine
+    container_name: Animate
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: animate-db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ani_postgres_data:/var/lib/postgresql/data
+    networks:
+      - local-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ani_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@animate.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8083:80"
+    volumes:
+      - ani_pgadim_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - local-network
+
+volumes:
+  ani_postgres_data:
+  ani_pgadim_data:
+
+
+networks:
+  local-network:
+    external: true
