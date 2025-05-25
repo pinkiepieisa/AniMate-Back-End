@@ -7,8 +7,9 @@ import lombok.Setter;
 
 @Entity
 @Table(name ="Users")
-@Inheritance(strategy = InheritanceType.JOINED)//é uma superclasse
-@Setter @Getter // anotações do lombok para getters e setters automáticos
+@Inheritance(strategy = InheritanceType.JOINED)
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -16,16 +17,24 @@ public class User {
     private Integer id;
     private String username;
 
+
+    public String getusername() {
+        return username;
+    }
+    public void setusername(String username) {
+        this.username = username;
+    }
+
+    //construtores
     public User(){
 
     }
-
 
     public User(Integer id,String username) {
         this.username = username;
         this.id = id;
     }
 
-    public void setusername(String username) {
-    }
+
+
 }

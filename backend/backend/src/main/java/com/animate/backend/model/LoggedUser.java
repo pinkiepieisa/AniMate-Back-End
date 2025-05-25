@@ -6,7 +6,8 @@ import lombok.Setter;
 
 @Entity
 @Table(name ="loggedUsers")
-@Setter @Getter // anotações do lombok para getters e setters automáticos
+@Setter
+@Getter // anotações do lombok para getters e setters automáticos
 public class LoggedUser extends User {
 
     private String bio;

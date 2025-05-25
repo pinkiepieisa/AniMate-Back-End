@@ -7,14 +7,15 @@ import lombok.Setter;
 
 @Entity
 @Table(name="Tokens")
-@Getter @Setter
+@Getter
+@Setter
 public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String token;
-    @ManyToOne @Setter
+    @ManyToOne @JsonIgnore
     private LoggedUser user;
     private Long expirationTime;
 

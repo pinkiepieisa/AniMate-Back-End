@@ -12,7 +12,8 @@ import java.util.Date;
 
 @Entity
 @Table(name="Messages")
-@Getter @Setter // anotações do lombok para getters e setters automáticos
+@Getter
+@Setter // anotações do lombok para getters e setters automáticos
 public class Message {
 
     @Id
