@@ -18,7 +18,8 @@ public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String from;
+    private long id;
+    private String from_user;
     private String username;
     private String text;
     private Timestamp time;

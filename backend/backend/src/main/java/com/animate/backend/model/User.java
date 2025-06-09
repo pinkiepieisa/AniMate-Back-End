@@ -13,9 +13,10 @@ import lombok.Setter;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String username;
+
 
 
     public String getusername() {
@@ -30,9 +31,9 @@ public class User {
 
     }
 
-    public User(Integer id,String username) {
+    public User(String username) {
         this.username = username;
-        this.id = id;
+
     }
 
 

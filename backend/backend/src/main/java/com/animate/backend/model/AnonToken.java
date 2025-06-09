@@ -7,7 +7,7 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name="AnonTokens")
+@Table(name="anon_tokens")
 @Getter
 @Setter
 public class AnonToken {
