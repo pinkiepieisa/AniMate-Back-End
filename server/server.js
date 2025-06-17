@@ -21,15 +21,23 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
     console.log('Usuário conectado: ', socket.id);
 
+    //Usuário desconectado
+    socket.on('disconnect', () => {
+        console.log('Usuário desconectado: ', socket.id);
+    });
+
     //Para a conexão com a canvas
     socket.on('draw', (data) => {
         socket.broadcast.emit('draw', data);
     });
 
-    //Usuário desconectado
-    socket.on('disconnect', () => {
-        console.log('Usuário desconectado: ', socket.id);
-    });
+   socket.on('message', text => {
+        io.emit('receive_message', {
+            text,
+            authorId: socket.id
+        });
+   });
+
 });
 
 //HTTP SERVER
