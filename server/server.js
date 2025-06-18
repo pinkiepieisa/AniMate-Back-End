@@ -32,12 +32,15 @@ io.on('connection', (socket) => {
     });
 
     //Para a conexão do chat
-     socket.on('message', (text) => {
-         io.emit('receive_message', {
-             text,
-             authorId: socket.id
-         });
-     });
+    socket.on('message', (text) => {
+        console.log(`Mensagem do usuário: ${socket.id}: ${text}`);
+
+        // Envia a mensagem para todos
+        io.emit('receive_message', {
+            text,
+            authorId: socket.id
+        });
+    });
 
 });
 
