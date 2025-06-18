@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
 
     //Para a conexão do chat
     socket.on('message', (text) => {
-        console.log(`Mensagem do usuário: ${socket.id}: ${text}`);
+        console.log(`Mensagem do usuário: ${socket.id}`);
 
         // Envia a mensagem para todos
         io.emit('receive_message', {
