@@ -17,7 +17,7 @@ const io = new Server(server, {
         }
 });
 
-//Usuário conectado
+    //Usuário conectado
 io.on('connection', (socket) => {
     console.log('Usuário conectado: ', socket.id);
 
@@ -26,17 +26,18 @@ io.on('connection', (socket) => {
         console.log('Usuário desconectado: ', socket.id);
     });
 
-    //Para a conexão com a canvas
+    //Para a conexão do desenho
     socket.on('draw', (data) => {
         socket.broadcast.emit('draw', data);
     });
 
-   socket.on('message', text => {
-        io.emit('receive_message', {
-            text,
-            authorId: socket.id
-        });
-   });
+    //Para a conexão do chat
+     socket.on('message', (text) => {
+         io.emit('receive_message', {
+             text,
+             authorId: socket.id
+         });
+     });
 
 });
 
