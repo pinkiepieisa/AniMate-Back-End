@@ -5,25 +5,32 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name ="logged_users")
+@Table(name = "logged_users")
+@Getter
 @Setter
-@Getter // anotações do lombok para getters e setters automáticos
-@PrimaryKeyJoinColumn(name = "id")
-public class LoggedUser extends User {
+public class LoggedUser {
 
-    private String bio;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String username;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
 
     public LoggedUser() {
-        super();
     }
 
-    public LoggedUser(String username, String bio, String email, String password) {
-        super(username);
-        this.bio = bio;
+    public LoggedUser(String username, String email, String password) {
+        this.username = username;
         this.email = email;
         this.password = password;
     }
-}
 
+    // Getters e setters já são gerados pelo Lombok com @Getter e @Setter
+
+}
