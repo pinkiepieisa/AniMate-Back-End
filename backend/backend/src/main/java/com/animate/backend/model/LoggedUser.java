@@ -22,6 +22,8 @@ public class LoggedUser {
     @Column(nullable = false)
     private String password;
 
+    private String bio;
+
     public LoggedUser() {
     }
 
@@ -30,6 +32,8 @@ public class LoggedUser {
         this.email = email;
         this.password = password;
     }
+
+
 
     // Getters e setters já são gerados pelo Lombok com @Getter e @Setter
 

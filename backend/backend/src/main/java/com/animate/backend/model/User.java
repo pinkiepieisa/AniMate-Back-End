@@ -16,6 +16,8 @@ public class User {
 
     private String username;
 
+    private String bio;
+
     private String email;
 
     private String password;
@@ -27,4 +29,7 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
+
+
 }

@@ -64,12 +64,12 @@ public class AuthService {
         if(!password.equals(rePassword)) {
             throw new Exception("Senhas não conferem");
         }
-        Optional<LoggedUser> userFound = userRepository.findByEmail(email);
+        Optional<User> userFound = userRepository.findByEmail(email);
         if(userFound.isPresent()) {
             throw new Exception("Usuário já cadastrado");
         }
 
-        LoggedUser user = new LoggedUser();
+        User user = new User();
         user.setusername(username);
         user.setEmail(email);
         user.setPassword(password);
@@ -80,7 +80,7 @@ public class AuthService {
         user.setEmail(email);
         user.setPassword(password);
 
-        Optional<LoggedUser> userFound = userRepository.findByEmail(email);
+        Optional<User> userFound = userRepository.findByEmail(email);
         if(userFound.isPresent() && userFound.get().getPassword().equals(password)) {
             Token token = new Token();
             token.setUser(userFound.get());
@@ -131,7 +131,7 @@ public class AuthService {
     public User toUser(String token) {
 
         Optional<Token> found = tokenRepository.findByToken(token);
-        return found.isPresent() ? found.get().getUser() : null;
+        return found.map(Token::getUser).orElse(null);
     }
 
 
