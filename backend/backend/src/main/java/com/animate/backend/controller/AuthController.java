@@ -1,7 +1,6 @@
 package com.animate.backend.controller;
 
 import com.animate.backend.dto.RegisterDTO;
-import com.animate.backend.model.AnonToken;
 import com.animate.backend.model.Token;
 import com.animate.backend.service.AuthService;
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500"})
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -24,54 +24,33 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody RegisterDTO registerDTO) {
-
         try {
             authService.signup(registerDTO);
             return ResponseEntity.status(HttpStatus.OK).body("Cadastrado com sucesso!");
         } catch (Exception e) {
             logger.error("Erro ao registrar usuário: {}", registerDTO.getUsername(), e);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflito");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflito: " + e.getMessage());
         }
     }
 
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody Map<String, String> user) {
-
         Token token = authService.signin(user.get("email"), user.get("password"));
         if (token == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos");
         }
         return ResponseEntity.ok(token);
     }
 
     @PostMapping("/check")
-    public ResponseEntity<?> check(@RequestHeader String token){
+    public ResponseEntity<?> check(@RequestHeader String token) {
         Boolean isValid = authService.validate(token);
         return (isValid) ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PostMapping("/signout")
-    public ResponseEntity<?> signout(@RequestHeader String token){
-
+    public ResponseEntity<?> signout(@RequestHeader String token) {
         authService.signout(token);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
+        return ResponseEntity.ok().build();
     }
-
-    @PostMapping("/setAnon")
-    public ResponseEntity<?> setAnon(@RequestBody Map<String, String> anon) {
-
-        Integer id = Integer.parseInt(anon.get("id"));  // Conversão
-        String username = anon.get("username");
-
-        AnonToken token = authService.setAnon(id, username);
-
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        return ResponseEntity.ok(token);
-    }
-
-
-
 }

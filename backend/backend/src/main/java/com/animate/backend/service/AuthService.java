@@ -14,7 +14,6 @@ import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -113,8 +112,6 @@ public class AuthService {
 
     }
 
-
-
     public Boolean validate(String token) {
 
         Optional<Token> found = tokenRepository.findByToken(token);
@@ -134,7 +131,7 @@ public class AuthService {
     public User toUser(String token) {
 
         Optional<Token> found = tokenRepository.findByToken(token);
-        return found.<User>map(Token::getUser).orElse(null);
+        return found.isPresent() ? found.get().getUser() : null;
     }
 
 

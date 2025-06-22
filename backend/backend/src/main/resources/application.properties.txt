@@ -6,15 +6,13 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 spring.jpa.hibernate.ddl-auto=update
 
-#nivel de log
+# Nível de log
 logging.level.root=INFO
 logging.level.com.animate.backend=DEBUG
 
-#arquivo de log
+# Arquivo de log
 logging.file.name=logs/backend.log
 
-#formata\uFFFD\uFFFDo
+# Formatação
 logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %logger - %msg%n
 logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} - %logger - %msg%n
-
-
