@@ -3,7 +3,7 @@ SOBRE:
 
 AniMate é um software de animação colaborativa, permitindo que múltiplos usuários criem juntos em tempo real (atualmente apenas em rede local).
 
-Repositório do frontend: https://github.com/Lazy-ghosthunter/AniMate
+Repositório do Front-End: https://github.com/Lazy-ghosthunter/AniMate
 
 Este projeto possui backend (Java/Spring Boot) e frontend (JavaScript/Node.js). A conexão é local no momento.
 
