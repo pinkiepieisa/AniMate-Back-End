@@ -36,11 +36,9 @@ PASSO 3: RODAR O SERVER (canvas e chat)
 
 O frontend estará disponível em http://localhost:3000.
 
-1. Clone o repositório do frontend:
-   git clone https://github.com/Lazy-ghosthunter/AniMate.git
-2. Navegue até o arquivo server
-3. Abra o cmd no mesmo local
-4. Rode o comando:
+1. Navegue até o arquivo server
+2. Abra o cmd no mesmo local
+3. Rode o comando:
    "node server.js"
-5. acesse o modo membro acessando a página em uma nova guia, copiando e alterando o url do canvas adm para o canvas membro.
+4. acesse o modo membro acessando a página em uma nova guia, copiando e alterando o url do canvas adm para o canvas membro.
    
