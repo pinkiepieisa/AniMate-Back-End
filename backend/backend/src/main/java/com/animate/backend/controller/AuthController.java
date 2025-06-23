@@ -35,17 +35,31 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody Map<String, String> user) {
-        Token token = authService.signin(user.get("email"), user.get("password"));
+        String email = user.get("email");
+        String password = user.get("password");
+
+        Token token = authService.signin(email, password);
+
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos");
         }
-        return ResponseEntity.ok(token);
+
+        // ✔️ Retornar somente o token como String
+        return ResponseEntity.ok(Map.of(
+                "token", token.getToken(),
+                "expirationTime", token.getExpirationTime(),
+                "userId", token.getUser().getId(),
+                "username", token.getUser().getUsername(),
+                "email", token.getUser().getEmail()
+        ));
     }
 
     @PostMapping("/check")
     public ResponseEntity<?> check(@RequestHeader String token) {
-        Boolean isValid = authService.validate(token);
-        return (isValid) ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        boolean isValid = authService.validate(token);
+        return isValid
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PostMapping("/signout")

@@ -15,21 +15,16 @@ public class User {
     private Integer id;
 
     private String username;
-
     private String bio;
-
     private String email;
-
     private String password;
 
     public User() {}
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, String bio) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.bio = bio;
     }
-
-
-
 }

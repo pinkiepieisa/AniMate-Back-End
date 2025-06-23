@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "tokens")
 @Getter
 @Setter
 public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String token;
 
