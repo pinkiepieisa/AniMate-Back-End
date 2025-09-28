@@ -44,7 +44,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos");
         }
 
-        // ✔️ Retornar somente o token como String
+        //Retornar somente o token como String
         return ResponseEntity.ok(Map.of(
                 "token", token.getToken(),
                 "expirationTime", token.getExpirationTime(),
