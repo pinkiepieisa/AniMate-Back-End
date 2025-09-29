@@ -22,6 +22,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: "admin@animate.com"
       PGADMIN_DEFAULT_PASSWORD: "admin"
       PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_LISTEN_PORT: "8081"
     ports:
       - "8083:8081"
     volumes:
