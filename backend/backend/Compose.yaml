@@ -32,6 +32,7 @@ services:
     networks:
       - local-network
 
+
 volumes:
   ani_postgres_data:
   ani_pgadim_data:
