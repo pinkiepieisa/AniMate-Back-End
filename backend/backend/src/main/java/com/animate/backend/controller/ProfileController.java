@@ -24,6 +24,7 @@ public class ProfileController {
     public record BioUpdateRequest(String bio) {}
     public record PictureUpdateRequest(String imageUrl) {}
     public record UsernameUpdateRequest(String username) {}
+    
 
     @PutMapping("/bio")
     public ResponseEntity<?> updateBio(@RequestParam String token, @RequestBody BioUpdateRequest request) {
@@ -31,7 +32,7 @@ public class ProfileController {
         if (user == null) {
             return ResponseEntity.status(401).body("Token inválido");
         }
-        return ResponseEntity.ok(new UserProfileDTO(user));
+        return ResponseEntity.ok("Bio atualizada com sucesso.");
     }
 
     @PutMapping("/username") 
@@ -47,7 +48,7 @@ public class ProfileController {
             return ResponseEntity.status(401).body("Token inválido ou falha ao encontrar usuário.");
         }
         
-        return ResponseEntity.ok(new UserProfileDTO(user));
+        return ResponseEntity.ok("Username atualizado com sucesso.");
     }    
 
     @GetMapping("/me")
@@ -56,7 +57,8 @@ public class ProfileController {
         if (user == null) {
             return ResponseEntity.status(401).body("Token inválido");
         }
-        return ResponseEntity.ok(new UserProfileDTO(user));
+        UserProfileDTO userProfile = userService.getUserProfileByToken(token);
+        return ResponseEntity.ok(userProfile);
     }
 
     @PutMapping("/picture")

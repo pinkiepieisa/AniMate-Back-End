@@ -3,10 +3,10 @@ package com.animate.backend.service;
 import com.animate.backend.model.User;
 import com.animate.backend.repository.UserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
-import com.animate.backend.dto.PictureDTO;
+import com.animate.backend.dto.UserProfileDTO;
 import com.animate.backend.model.ProfilePic;
 import com.animate.backend.repository.PictureRepository;
 import java.util.Optional;
@@ -81,6 +81,24 @@ public class UserService {
         user.setUsername(newUsername); // Assumindo que a classe User tem um setUsername
         userRepository.save(user);
         return user;
+    }
+
+    public UserProfileDTO getUserProfileByToken(String token) {
+
+        
+        User user = getUserByToken(token);
+        if(user == null){
+            return null;
+        }
+
+        // Busca a foto de perfil associada ao usuário
+        String imageUrl = pictureRepository.findByUser(user)
+                .map(ProfilePic::getImageUrl)
+                .orElse(null);
+
+        // Cria e retorna o DTO com todos os dados
+        return new UserProfileDTO(user.getUsername(), user.getBio(), imageUrl);
+    
     }
 }
 
