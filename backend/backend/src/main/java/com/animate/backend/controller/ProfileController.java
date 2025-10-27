@@ -12,6 +12,7 @@ import com.animate.backend.model.ProfilePic;
 
 @RestController
 @RequestMapping("/profile")
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500"}, methods = {RequestMethod.PUT, RequestMethod.POST, RequestMethod.GET})
 public class ProfileController {
 
     private final UserService userService;
@@ -22,6 +23,7 @@ public class ProfileController {
 
     public record BioUpdateRequest(String bio) {}
     public record PictureUpdateRequest(String imageUrl) {}
+    public record UsernameUpdateRequest(String username) {}
 
     @PutMapping("/bio")
     public ResponseEntity<?> updateBio(@RequestParam String token, @RequestBody BioUpdateRequest request) {
@@ -31,6 +33,22 @@ public class ProfileController {
         }
         return ResponseEntity.ok(new UserProfileDTO(user));
     }
+
+    @PutMapping("/username") 
+    public ResponseEntity<?> updateUsername(@RequestParam String token, @RequestBody UsernameUpdateRequest request) {
+    
+        if (request.username() == null || request.username().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O nome de usuário não pode estar vazio.");
+        }
+        
+        User user = userService.updateUsernameByToken(token, request.username());
+        
+        if (user == null) {
+            return ResponseEntity.status(401).body("Token inválido ou falha ao encontrar usuário.");
+        }
+        
+        return ResponseEntity.ok(new UserProfileDTO(user));
+    }    
 
     @GetMapping("/me")
     public ResponseEntity<?> getProfile(@RequestParam String token) {
@@ -56,5 +74,5 @@ public class ProfileController {
     // 4. Se deu tudo certo, retorne um DTO com os dados da foto salva
         return ResponseEntity.ok(new PictureDTO(savedPicture));
         
-        }
+    }
 }

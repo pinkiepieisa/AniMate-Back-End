@@ -68,6 +68,20 @@ public class UserService {
 
         return pictureRepository.save(profilePic);
     }
+
+    public User updateUsernameByToken(String token, String newUsername) {
+        String userId = tokenService.getUserIdFromToken(token);
+        if (userId == null) return null;
+
+        Optional<User> optionalUser = userRepository.findById(Integer.parseInt(userId));
+        if (optionalUser.isEmpty()) return null;
+
+        User user = optionalUser.get();
+        
+        user.setUsername(newUsername); // Assumindo que a classe User tem um setUsername
+        userRepository.save(user);
+        return user;
+    }
 }
 
    
