@@ -7,6 +7,7 @@ import com.animate.backend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,6 +34,11 @@ public class PasswordService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    // Optional frontend base URL (e.g. http://127.0.0.1:5500/AniMate/animatereset.html)
+    // If empty, the service will send a sensible default full URL so emails contain clickable links
+    @Value("${frontend.base-url:}")
+    private String frontendBaseUrl;
+
     // Token validity in seconds (e.g., 3600 = 1 hour)
     private final long TOKEN_VALID_SECONDS = 3600;
 
@@ -45,8 +51,16 @@ public class PasswordService {
         prt.setUsed(false);
         tokenRepository.save(prt);
 
-        // send email if mailSender configured, otherwise just log the link (dev mode)
-        String resetLink = String.format("%s/auth/reset-password?token=%s", "http://localhost:8080", token);
+   
+    String resetLink;
+    if (frontendBaseUrl != null && !frontendBaseUrl.isBlank()) {
+        // ensure there's no trailing '/'
+        resetLink = String.format("%s?token=%s", frontendBaseUrl.replaceAll("/+$", ""), token);
+    } else {
+        // sensible default: point to Live Server default for the frontend so the link is clickable
+        String defaultFrontend = "http://127.0.0.1:5500/AniMate/animatereset.html";
+        resetLink = String.format("%s?token=%s", defaultFrontend, token);
+    }
         if (mailSender != null) {
             try {
                 SimpleMailMessage message = new SimpleMailMessage();
