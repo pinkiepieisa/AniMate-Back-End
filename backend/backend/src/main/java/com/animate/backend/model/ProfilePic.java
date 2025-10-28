@@ -16,6 +16,7 @@ public class ProfilePic {
     private Long id;
 
     private String imageUrl;
+    private String imageUuid;
     @OneToOne 
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -25,6 +26,12 @@ public class ProfilePic {
 
     public ProfilePic(String imageUrl, User user) {
         this.imageUrl = imageUrl;
+        this.user = user;
+    }
+
+    public ProfilePic(String imageUrl, String imageUuid, User user) {
+        this.imageUrl = imageUrl;
+        this.imageUuid = imageUuid;
         this.user = user;
     }
 }

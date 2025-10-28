@@ -22,7 +22,7 @@ public class ProfileController {
     }
 
     public record BioUpdateRequest(String bio) {}
-    public record PictureUpdateRequest(String imageUrl) {}
+    public record PictureUpdateRequest(String imageUrl, String imageUuid) {}
     public record UsernameUpdateRequest(String username) {}
     
 
@@ -67,7 +67,7 @@ public class ProfileController {
         if (user == null) {
             return ResponseEntity.status(401).body("Token inválido");
         }
-        ProfilePic savedPicture = userService.upsertProfilePicture(token, request.imageUrl());
+    ProfilePic savedPicture = userService.upsertProfilePicture(token, request.imageUrl(), request.imageUuid());
 
         if (savedPicture == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token de usuário inválido");
@@ -77,4 +77,5 @@ public class ProfileController {
         return ResponseEntity.ok(new PictureDTO(savedPicture));
         
     }
+    
 }

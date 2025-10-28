@@ -7,12 +7,14 @@ public class UserProfileDTO {
     private String username;
     private String bio;
     private String imageUrl; // Adicione este campo
+    private String imageUuid;
 
     // Construtor
-    public UserProfileDTO(String username, String bio, String imageUrl) {
+    public UserProfileDTO(String username, String bio, String imageUrl, String imageUuid) {
         this.username = username;
         this.bio = bio;
         this.imageUrl = imageUrl; // Adicione esta linha
+        this.imageUuid = imageUuid;
     }
 
     // Getters e Setters
@@ -39,5 +41,13 @@ public class UserProfileDTO {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getImageUuid() {
+        return imageUuid;
+    }
+
+    public void setImageUuid(String imageUuid) {
+        this.imageUuid = imageUuid;
     }
 }

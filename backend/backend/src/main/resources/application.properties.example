@@ -1,0 +1,31 @@
+# Example application.properties for local development.
+# Copy this to application.properties (or better: set the environment variables below in your OS/IDE)
+
+spring.application.name=backend
+spring.datasource.url=jdbc:postgresql://localhost:5433/animate-db
+spring.datasource.username=admin
+spring.datasource.password=admin123
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+
+# Logging
+logging.level.root=INFO
+logging.level.com.animate.backend=DEBUG
+logging.file.name=logs/backend.log
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %logger - %msg%n
+logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} - %logger - %msg%n
+
+# === Chibisafe (do NOT commit secrets) ===
+# Prefer providing these via environment variables instead of committing them to version control.
+# Example (Windows cmd):
+#   setx CHIBISAFE_APIKEY "your_api_key_here"
+# Example (PowerShell):
+#   $env:CHIBISAFE_APIKEY = "your_api_key_here"
+# Example (Unix/macOS):
+#   export CHIBISAFE_APIKEY="your_api_key_here"
+
+# Optional: override URL if Chibisafe runs somewhere else
+chibisafe.url=${CHIBISAFE_URL:http://localhost:24424}
+# The API key will be read from the CHIBISAFE_APIKEY environment variable
+chibisafe.apikey=${CHIBISAFE_APIKEY:}
