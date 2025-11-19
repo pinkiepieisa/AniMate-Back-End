@@ -42,3 +42,4 @@ O frontend estará disponível em http://localhost:3000.
    "node server.js"
 4. acesse o modo membro acessando a página em uma nova guia, copiando e alterando o url do canvas adm para o canvas membro.
    
+PgAdmin - http://localhost:8083
