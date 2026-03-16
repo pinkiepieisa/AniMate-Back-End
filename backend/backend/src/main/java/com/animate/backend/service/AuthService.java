@@ -97,13 +97,13 @@ public class AuthService {
     }
 
     // Criação de token anônimo
-    public AnonToken setAnon(Integer id, String username) {
+    public AnonToken setAnon(UUID id, String username) {
         Optional<User> userFound = userRepository.findById(id);
 
         if (userFound.isPresent()) {
             User anonUser = userFound.get();
             anonUser.setUsername(username);
-            anonRepository.save(anonUser);
+            userRepository.save(anonUser);
 
             AnonToken anonToken = new AnonToken();
             anonToken.setUser(anonUser);
