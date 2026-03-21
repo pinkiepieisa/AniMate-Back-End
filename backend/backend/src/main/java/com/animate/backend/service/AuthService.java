@@ -75,18 +75,31 @@ public class AuthService {
     }
 
     // Login
-    public Token signin(String email, String password) {
+    public Token signin(String email, String password, boolean rememberMe) {
+
         Optional<User> userFound = userRepository.findByEmail(email);
 
         if (userFound.isPresent()) {
             User user = userFound.get();
 
-            // Comparando a senha digitada com a senha criptografada
+            // Comparando senha digitada com senha criptografada
             if (passwordEncoder.matches(password, user.getPassword())) {
+
                 Token token = new Token();
                 token.setUser(user);
                 token.setToken(UUID.randomUUID().toString());
-                token.setExpirationTime(Instant.now().plusSeconds(TOKEN_TTL).toEpochMilli());
+
+                long expiration;
+
+                if (rememberMe) {
+                    // 30 dias
+                    expiration = Instant.now().plusSeconds(60 * 60 * 24 * 30).toEpochMilli();
+                } else {
+                    // tempo padrão
+                    expiration = Instant.now().plusSeconds(TOKEN_TTL).toEpochMilli();
+                }
+
+                token.setExpirationTime(expiration);
 
                 tokenRepository.save(token);
                 return token;
@@ -97,13 +110,13 @@ public class AuthService {
     }
 
     // Criação de token anônimo
-    public AnonToken setAnon(Integer id, String username) {
+    public AnonToken setAnon(UUID id, String username) {
         Optional<User> userFound = userRepository.findById(id);
 
         if (userFound.isPresent()) {
             User anonUser = userFound.get();
             anonUser.setUsername(username);
-            anonRepository.save(anonUser);
+            userRepository.save(anonUser);
 
             AnonToken anonToken = new AnonToken();
             anonToken.setUser(anonUser);
