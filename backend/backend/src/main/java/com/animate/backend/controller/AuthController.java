@@ -1,5 +1,6 @@
 package com.animate.backend.controller;
 
+import com.animate.backend.dto.LoginDTO;
 import com.animate.backend.dto.RegisterDTO;
 import com.animate.backend.model.Token;
 import com.animate.backend.model.User;
@@ -45,26 +46,37 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody Map<String, String> user) {
-        String email = user.get("email");
-        String password = user.get("password");
+@PostMapping("/signin")
+public ResponseEntity<?> signin(@RequestBody LoginDTO request) {
 
-        Token token = authService.signin(email, password);
+    // Pegando dados enviados pelo frontend
+    String email = request.getEmail();
+    String password = request.getPassword();
 
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos");
-        }
+    // Campo novo que criamos no LoginDTO
+    // Ele indica se o usuário quer permanecer logado
+    boolean rememberMe = request.isRememberMe();
 
-        //Retornar somente o token como String
-        return ResponseEntity.ok(Map.of(
-                "token", token.getToken(),
-                "expirationTime", token.getExpirationTime(),
-                "userId", token.getUser().getId(),
-                "username", token.getUser().getUsername(),
-                "email", token.getUser().getEmail()
-        ));
+    // Chamando o service passando o rememberMe
+    // O AuthService decidirá quanto tempo o token dura
+    Token token = authService.signin(email, password, rememberMe);
+
+    // Se login falhar
+    if (token == null) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("Email ou senha incorretos");
     }
+
+    // Resposta enviada ao frontend
+    return ResponseEntity.ok(Map.of(
+            "token", token.getToken(), // token da sessão
+            "expirationTime", token.getExpirationTime(), // tempo de expiração (maior se rememberMe=true)
+            "userId", token.getUser().getId(),
+            "username", token.getUser().getUsername(),
+            "email", token.getUser().getEmail()
+    ));
+}
 
     @PostMapping("/check")
     public ResponseEntity<?> check(@RequestHeader String token) {

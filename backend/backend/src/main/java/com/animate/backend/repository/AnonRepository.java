@@ -1,18 +1,15 @@
 package com.animate.backend.repository;
 
 import com.animate.backend.model.AnonToken;
-import com.animate.backend.model.Token;
-import com.animate.backend.model.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface AnonRepository extends CrudRepository<User, Integer> {
+public interface AnonRepository extends CrudRepository<AnonToken, UUID> {
 
-    Optional<User> findById(Integer id);
+    Optional<AnonToken> findByAnonToken(String anonToken);
 
-
-    Integer Id(Integer id);
 }
