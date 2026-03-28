@@ -39,3 +39,5 @@ build/
 scripts/config.js
 secrets.properties
 
+application.properties
+
