@@ -14,9 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500"})
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -69,13 +69,13 @@ public ResponseEntity<?> signin(@RequestBody LoginDTO request) {
     }
 
     // Resposta enviada ao frontend
-    return ResponseEntity.ok(Map.of(
-            "token", token.getToken(), // token da sessão
-            "expirationTime", token.getExpirationTime(), // tempo de expiração (maior se rememberMe=true)
-            "userId", token.getUser().getId(),
-            "username", token.getUser().getUsername(),
-            "email", token.getUser().getEmail()
-    ));
+    Map<String, Object> response = new HashMap<>();
+    response.put("token", token.getToken());
+    response.put("expirationTime", token.getExpirationTime());
+    response.put("userId", token.getUser().getId());
+    response.put("username", token.getUser().getUsername());
+    response.put("email", token.getUser().getEmail());
+    return ResponseEntity.ok(response);
 }
 
     @PostMapping("/check")
