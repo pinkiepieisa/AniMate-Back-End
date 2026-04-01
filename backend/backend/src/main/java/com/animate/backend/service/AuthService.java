@@ -48,8 +48,16 @@ public class AuthService {
         String emailRegex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*"
                 + "@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
-        if (email == null || password == null) {
-            throw new Exception("Dados de registro inválidos");
+        if (username == null || username.isBlank()) {
+            throw new Exception("Nome de usuário é obrigatório");
+        }
+
+        if (email == null || email.isBlank()) {
+            throw new Exception("Email é obrigatório");
+        }
+
+        if (password == null || password.isBlank()) {
+            throw new Exception("Senha é obrigatória");
         }
 
         if (!email.matches(emailRegex)) {
