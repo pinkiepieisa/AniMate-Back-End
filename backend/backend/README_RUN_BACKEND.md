@@ -25,6 +25,7 @@ Notes and troubleshooting
   Or install Maven and use the "Run backend (mvn)" task.
 
 - If you edited `secrets.properties`, restart the backend task (Stop then Run) — Spring reads the file on startup.
+- Datasource env vars are optional for local runs. If `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, and `SPRING_DATASOURCE_PASSWORD` are not set, the backend falls back to `jdbc:postgresql://localhost:5433/animate-db`, `admin`, and `admin123`.
 
 - If you hit permission errors running `mvnw.cmd`, try running the terminal as Administrator once and/or unblock the file from Explorer (right-click → Properties → Unblock).
 
