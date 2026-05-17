@@ -40,4 +40,6 @@ scripts/config.js
 secrets.properties
 
 application.properties
+# application-local.properties
+# -> LEMBRA DE REMOVER O COMENTÁRIO APÓS O PULL DO PESSOAL DO GRUPO
 

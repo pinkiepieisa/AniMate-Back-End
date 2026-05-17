@@ -43,3 +43,10 @@ O frontend estará disponível em http://localhost:3000.
 4. acesse o modo membro acessando a página em uma nova guia, copiando e alterando o url do canvas adm para o canvas membro.
    
 PgAdmin - http://localhost:8083
+
+Comando para rodar localmente:
+- Use na raiz do projeto. Observe se estará nessa pasta:
+   AniMate-Back-End\backend\backend> 
+- Digite no terminal:
+   .\mvnw spring-boot:run "-Dspring-boot.run.profiles=local" -> no PowerShell
+   ./mvnw spring-boot:run -Dspring-boot.run.profiles=local -> No CMD normal
