@@ -108,7 +108,11 @@ public class AuthController {
     })
 
     @PostMapping("/check")
-    public ResponseEntity<?> check(@RequestHeader String token) {
+    public ResponseEntity<?> check(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String token = extractTokenFromHeader(authHeader);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token não fornecido");
+        }
         boolean isValid = authService.validate(token);
         return isValid
                 ? ResponseEntity.ok().build()
@@ -119,9 +123,24 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Logout realizado com sucesso!")
 
     @PostMapping("/signout")
-    public ResponseEntity<?> signout(@RequestHeader String token) {
+    public ResponseEntity<?> signout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String token = extractTokenFromHeader(authHeader);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token não fornecido");
+        }
         authService.signout(token);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Extrai o token do header Authorization.
+     * Formato esperado: Bearer <token>
+     */
+    private String extractTokenFromHeader(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 
     @Operation(summary = "Solicitar recuperação de senha", description = "Envia um link de redefinição de senha para o email informado")

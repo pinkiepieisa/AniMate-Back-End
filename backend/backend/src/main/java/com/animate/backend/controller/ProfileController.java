@@ -42,7 +42,11 @@ public class ProfileController {
     })
 
     @PutMapping("/bio")
-    public ResponseEntity<?> updateBio(@RequestParam String token, @RequestBody BioUpdateRequest request) {
+    public ResponseEntity<?> updateBio(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody BioUpdateRequest request) {
+        String token = extractTokenFromHeader(authHeader);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token não fornecido");
+        }
         User user = userService.updateBioByToken(token, request.bio());
         if (user == null) {
             return ResponseEntity.status(401).body("Token inválido");
@@ -58,7 +62,12 @@ public class ProfileController {
     })
 
     @PutMapping("/username")
-    public ResponseEntity<?> updateUsername(@RequestParam String token, @RequestBody UsernameUpdateRequest request) {
+    public ResponseEntity<?> updateUsername(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody UsernameUpdateRequest request) {
+
+        String token = extractTokenFromHeader(authHeader);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token não fornecido");
+        }
 
         if (request.username() == null || request.username().trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O nome de usuário não pode estar vazio.");
@@ -80,7 +89,11 @@ public class ProfileController {
     })
 
     @GetMapping("/me")
-    public ResponseEntity<?> getProfile(@RequestParam String token) {
+    public ResponseEntity<?> getProfile(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String token = extractTokenFromHeader(authHeader);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token não fornecido");
+        }
         User user = userService.getUserByToken(token);
         if (user == null) {
             return ResponseEntity.status(401).body("Token inválido");
@@ -96,8 +109,12 @@ public class ProfileController {
     })
 
     @PutMapping("/picture")
-    public ResponseEntity<?> upsertProfilePicture(@RequestParam String token,
+    public ResponseEntity<?> upsertProfilePicture(@RequestHeader(value = "Authorization", required = false) String authHeader,
             @RequestBody PictureUpdateRequest request) {
+        String token = extractTokenFromHeader(authHeader);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token não fornecido");
+        }
         User user = userService.getUserByToken(token);
         if (user == null) {
             return ResponseEntity.status(401).body("Token inválido");
@@ -108,7 +125,18 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token de usuário inválido");
         }
 
-        // 4. Se deu tudo certo, retorne um DTO com os dados da foto salva
+        // Se deu tudo certo, retorne um DTO com os dados da foto salva
         return ResponseEntity.ok(new PictureDTO(savedPicture));
+    }
+
+    /**
+     * Extrai o token do header Authorization.
+     * Formato esperado: Bearer <token>
+     */
+    private String extractTokenFromHeader(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 }
