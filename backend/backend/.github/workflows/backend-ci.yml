@@ -33,5 +33,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven
 
+      - name: Dar permissão ao Maven Wrapper
+        working-directory: backend
+        run: chmod +x mvnw
+
       - name: Executar testes
-        run: mvn test
+        working-directory: backend
+        run: ./mvnw test
