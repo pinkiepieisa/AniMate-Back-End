@@ -34,9 +34,9 @@ jobs:
             ${{ runner.os }}-maven
 
       - name: Dar permissão ao Maven Wrapper
-        working-directory: backend
+        working-directory: backend/backend
         run: chmod +x mvnw
 
       - name: Executar testes
-        working-directory: backend
+        working-directory: backend/backend
         run: ./mvnw test
