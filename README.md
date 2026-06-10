@@ -50,3 +50,6 @@ Comando para rodar localmente:
 - Digite no terminal:
    .\mvnw spring-boot:run "-Dspring-boot.run.profiles=local" -> no PowerShell
    ./mvnw spring-boot:run -Dspring-boot.run.profiles=local -> No CMD normal
+
+Para abrir o Swagger:
+- Link: http://localhost:8080/swagger-ui/index.html 

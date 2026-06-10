@@ -17,5 +17,4 @@ public class LoginDTO {
 
     @Schema(description = "Se verdadeiro, o token terá duração maior (sessão prolongada)", example = "false")
     private boolean rememberMe;
-
 }
