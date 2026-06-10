@@ -126,6 +126,27 @@
 
 				</configuration>
 			</plugin>
+
+		<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <configuration>
+        <statelessTestsetReporter
+            implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+            <usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
+            <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
+            <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
+        </statelessTestsetReporter>
+        <consoleOutputReporter
+            implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter"/>
+        <statelessTestsetInfoReporter
+            implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporter">
+            <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
+            <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
+        </statelessTestsetInfoReporter>
+    </configuration>
+</plugin>
+
 		</plugins>
 	</build>
 
