@@ -50,3 +50,12 @@ Comando para rodar localmente:
 - Digite no terminal:
    .\mvnw spring-boot:run "-Dspring-boot.run.profiles=local" -> no PowerShell
    ./mvnw spring-boot:run -Dspring-boot.run.profiles=local -> No CMD normal
+
+Para abrir o Swagger:
+- Link: http://localhost:8080/swagger-ui/index.html 
+
+Para verificar o monitoramento do Back:
+- http://localhost:8080/actuator/prometheus
+
+Para verificar as métricas do Server em Node.Js:
+- http://localhost:3000/metrics

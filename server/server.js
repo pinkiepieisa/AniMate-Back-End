@@ -3,6 +3,7 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
+const client = require('prom-client');
 
 //Permite a conexão externa
 const app = express();
@@ -14,10 +15,10 @@ const io = new Server(server, {
         origin: "*",
         //Aceita as conexões de qualquer origem
         methods: ["GET", "POST"]
-        }
+    }
 });
 
-    //Usuário conectado
+//Usuário conectado
 io.on('connection', (socket) => {
     console.log('Usuário conectado: ', socket.id);
 
@@ -42,6 +43,16 @@ io.on('connection', (socket) => {
         });
     });
 
+});
+
+// Ativa a coleta de métricas padrão do Node.js (CPU, Memória, Garbage Collection)
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics({ register: client.register });
+
+// Cria o endpoint que o Prometheus vai ler
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
 });
 
 //HTTP SERVER
