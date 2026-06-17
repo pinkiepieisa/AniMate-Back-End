@@ -1,24 +1,24 @@
-2026-06-16 22:09:31 - com.animate.backend.BackendApplication - Starting BackendApplication using Java 21.0.5 with PID 29188 (C:\Users\l34nd\OneDrive\Área de Trabalho\backAnimate\AniMate-Back-End\backend\backend\target\classes started by l34nd in C:\Users\l34nd\OneDrive\Área de Trabalho\backAnimate\AniMate-Back-End\backend\backend)
-2026-06-16 22:09:31 - com.animate.backend.BackendApplication - Running with Spring Boot v3.4.11, Spring v6.2.12
-2026-06-16 22:09:31 - com.animate.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
-2026-06-16 22:09:31 - org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-06-16 22:09:31 - org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-06-16 22:09:34 - org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-06-16 22:09:34 - org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 177 ms. Found 7 JPA repository interfaces.
-2026-06-16 22:09:36 - org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
-2026-06-16 22:09:36 - org.apache.catalina.core.StandardService - Starting service [Tomcat]
-2026-06-16 22:09:36 - org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
-2026-06-16 22:09:36 - org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-06-16 22:09:36 - org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4769 ms
-2026-06-16 22:09:36 - org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-06-16 22:09:36 - org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.33.Final
-2026-06-16 22:09:36 - org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2026-06-16 22:09:37 - org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-06-16 22:09:37 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-06-16 22:09:38 - com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@12ea620
-2026-06-16 22:09:38 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-06-16 22:09:38 - org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-06-16 22:09:38 - org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+2026-06-17 20:05:56 - com.animate.backend.BackendApplication - Starting BackendApplication using Java 21.0.5 with PID 21676 (C:\Users\l34nd\OneDrive\Área de Trabalho\backAnimate\AniMate-Back-End\backend\backend\target\classes started by l34nd in C:\Users\l34nd\OneDrive\Área de Trabalho\backAnimate\AniMate-Back-End\backend\backend)
+2026-06-17 20:05:56 - com.animate.backend.BackendApplication - Running with Spring Boot v3.4.11, Spring v6.2.12
+2026-06-17 20:05:56 - com.animate.backend.BackendApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-17 20:05:56 - org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-06-17 20:05:56 - org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-06-17 20:05:59 - org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-17 20:05:59 - org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 184 ms. Found 7 JPA repository interfaces.
+2026-06-17 20:06:00 - org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-06-17 20:06:00 - org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-17 20:06:00 - org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2026-06-17 20:06:01 - org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-06-17 20:06:01 - org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4491 ms
+2026-06-17 20:06:01 - org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-06-17 20:06:01 - org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.33.Final
+2026-06-17 20:06:01 - org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-06-17 20:06:02 - org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-17 20:06:02 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-17 20:06:02 - com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@53246219
+2026-06-17 20:06:02 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-17 20:06:03 - org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-17 20:06:03 - org.hibernate.orm.connections.pooling - HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
 	Database version: 15.4
@@ -32,7 +32,7 @@
 2026-06-16 22:09:41 - org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
 2026-06-16 22:09:41 - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration - 
 
-Using generated security password: a9115cbd-2689-4c5b-9634-e4fa930e456d
+Using generated security password: 77b77853-5a89-4c86-8270-264566b515ca
 
 This generated password is for development use only. Your security configuration must be updated before running your application in production.
 
