@@ -19,10 +19,12 @@ target/
 *.iml
 *.ipr
 
+logs/
 *.log
 *.gz
 *.meta
 dataSources*.xml
+.idea/
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
