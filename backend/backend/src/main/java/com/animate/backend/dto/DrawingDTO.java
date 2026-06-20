@@ -2,10 +2,14 @@ package com.animate.backend.dto;
 
 import com.animate.backend.model.Drawing;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Getter // <-- ADICIONE AQUI
+@Setter
 @Schema(description = "Dados de um desenho salvo")
 public class DrawingDTO {
 
