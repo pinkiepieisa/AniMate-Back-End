@@ -24,19 +24,21 @@ import java.util.UUID;
 public class DrawingController {
 
     private final LayerService layerService;
+    private final DrawingService drawingService;
 
     public DrawingController(DrawingService drawingService, LayerService layerService) {
         this.drawingService = drawingService;
         this.layerService = layerService;
     }
 
-    private final DrawingService drawingService;
 
-    public DrawingController(DrawingService drawingService) {
-        this.drawingService = drawingService;
-    }
+
 
     // ── Request bodies ────────────────────────────────────────────────────────
+    public record UpdateLayerVisibilityRequest(Boolean visible) {}
+
+    public record DuplicateLayerRequest(String name) {}
+
     public record AddLayerRequest(String name) {}
 
     public record UpdateLayerNameRequest(String name) {}
@@ -48,7 +50,48 @@ public class DrawingController {
     public record UpdateRequest(String title, String canvasData) {}
 
     // ── Endpoints ─────────────────────────────────────────────────────────────
+
     // ── Endpoints de Camadas ──────────────────────────────────────────────────
+
+    @Operation(summary = "Atualizar visibilidade da camada")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Visibilidade atualizada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Camada não encontrada.")
+    })
+    @PutMapping("/{drawingId}/layers/{layerId}/visibility")
+    public ResponseEntity<?> updateLayerVisibility(@RequestParam String token,
+                                                   @PathVariable UUID drawingId,
+                                                   @PathVariable UUID layerId,
+                                                   @RequestBody UpdateLayerVisibilityRequest request) {
+        if (request.visible() == null) {
+            return ResponseEntity.badRequest().body("Campo 'visible' é obrigatório.");
+        }
+        LayerDTO updated = layerService.updateLayerVisibility(token, drawingId, layerId, request.visible());
+        if (updated == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Camada não encontrada.");
+        }
+        return ResponseEntity.ok(updated);
+    }
+
+    // ── Novo endpoint: duplicar camada (com conteúdo/frames copiados) ─
+    @Operation(summary = "Duplicar camada",
+            description = "Cria uma nova camada copiando nome, opacidade, visibilidade e frames da camada de origem.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Camada duplicada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Camada de origem não encontrada.")
+    })
+    @PostMapping("/{drawingId}/layers/{layerId}/duplicate")
+    public ResponseEntity<?> duplicateLayer(@RequestParam String token,
+                                            @PathVariable UUID drawingId,
+                                            @PathVariable UUID layerId,
+                                            @RequestBody(required = false) DuplicateLayerRequest request) {
+        String desiredName = (request != null) ? request.name() : null;
+        LayerDTO duplicated = layerService.duplicateLayer(token, drawingId, layerId, desiredName);
+        if (duplicated == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Camada não encontrada.");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(duplicated);
+    }
 
     @Operation(summary = "Listar camadas de um desenho")
     @ApiResponses({

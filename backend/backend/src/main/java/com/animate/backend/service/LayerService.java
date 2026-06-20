@@ -30,6 +30,8 @@ public class LayerService {
     }
 
     // ── Adicionar Camada ──────────────────────────────────────────────────────
+    // Camadas criadas pelo usuário NUNCA são locked (só a camada "Fundo",
+    // criada automaticamente — ver DrawingService.createDefaultLayers).
 
     public LayerDTO addLayer(String token, UUID drawingId, String layerName) {
         var found = getDrawingIfOwned(token, drawingId);
@@ -39,7 +41,6 @@ public class LayerService {
         try {
             ObjectNode canvasData = (ObjectNode) objectMapper.readTree(drawing.getCanvasData());
 
-            // Inicializa array de layers se não existir
             if (!canvasData.has("layers")) {
                 canvasData.putArray("layers");
             }
@@ -50,6 +51,7 @@ public class LayerService {
             newLayer.put("name", layerName != null ? layerName : "Layer");
             newLayer.put("opacity", 1.0);
             newLayer.put("visible", true);
+            newLayer.put("locked", false); // NOVO: camadas novas nunca são travadas
             newLayer.putArray("frames");
 
             ((ArrayNode) canvasData.get("layers")).add(newLayer);
@@ -58,7 +60,7 @@ public class LayerService {
             drawingRepository.save(drawing);
             logger.info("Layer added: layerId={} drawingId={}", layerId, drawingId);
 
-            return new LayerDTO(layerId, layerName, 1.0, true, new ArrayList<>());
+            return new LayerDTO(layerId, layerName, 1.0, true, false, new ArrayList<>());
 
         } catch (Exception e) {
             logger.error("Erro ao adicionar camada", e);
@@ -67,6 +69,7 @@ public class LayerService {
     }
 
     // ── Remover Camada ────────────────────────────────────────────────────────
+    // Camadas locked (Fundo) não podem ser removidas, mesmo via API direta.
 
     public boolean removeLayer(String token, UUID drawingId, UUID layerId) {
         var found = getDrawingIfOwned(token, drawingId);
@@ -82,7 +85,12 @@ public class LayerService {
             boolean removed = false;
 
             for (int i = 0; i < layers.size(); i++) {
-                if (layers.get(i).get("id").asText().equals(layerId.toString())) {
+                JsonNode layer = layers.get(i);
+                if (layer.get("id").asText().equals(layerId.toString())) {
+                    if (isLocked(layer)) {
+                        logger.warn("Tentativa de remover camada locked: layerId={} drawingId={}", layerId, drawingId);
+                        return false; // camada de Fundo é protegida
+                    }
                     layers.remove(i);
                     removed = true;
                     break;
@@ -104,6 +112,7 @@ public class LayerService {
     }
 
     // ── Editar Nome da Camada ─────────────────────────────────────────────────
+    // Bloqueado para camadas locked (Fundo).
 
     public LayerDTO updateLayerName(String token, UUID drawingId, UUID layerId, String newName) {
         var found = getDrawingIfOwned(token, drawingId);
@@ -118,6 +127,10 @@ public class LayerService {
             ArrayNode layers = (ArrayNode) canvasData.get("layers");
             for (JsonNode layer : layers) {
                 if (layer.get("id").asText().equals(layerId.toString())) {
+                    if (isLocked(layer)) {
+                        logger.warn("Tentativa de renomear camada locked: layerId={} drawingId={}", layerId, drawingId);
+                        return null;
+                    }
                     ((ObjectNode) layer).put("name", newName);
                     drawing.setCanvasData(objectMapper.writeValueAsString(canvasData));
                     drawingRepository.save(drawing);
@@ -135,6 +148,7 @@ public class LayerService {
     }
 
     // ── Editar Opacidade da Camada ────────────────────────────────────────────
+    // Bloqueado para camadas locked (Fundo).
 
     public LayerDTO updateLayerOpacity(String token, UUID drawingId, UUID layerId, Double opacity) {
         if (opacity == null || opacity < 0.0 || opacity > 1.0) {
@@ -154,6 +168,10 @@ public class LayerService {
             ArrayNode layers = (ArrayNode) canvasData.get("layers");
             for (JsonNode layer : layers) {
                 if (layer.get("id").asText().equals(layerId.toString())) {
+                    if (isLocked(layer)) {
+                        logger.warn("Tentativa de alterar opacidade de camada locked: layerId={} drawingId={}", layerId, drawingId);
+                        return null;
+                    }
                     ((ObjectNode) layer).put("opacity", opacity);
                     drawing.setCanvasData(objectMapper.writeValueAsString(canvasData));
                     drawingRepository.save(drawing);
@@ -170,7 +188,115 @@ public class LayerService {
         }
     }
 
+    // ── Editar Visibilidade da Camada (NOVO) ──────────────────────────────────
+    // Diferente de nome/opacidade, a camada de Fundo PODE ter a visibilidade
+    // alterada (faz sentido poder esconder o fundo temporariamente).
+
+    public LayerDTO updateLayerVisibility(String token, UUID drawingId, UUID layerId, Boolean visible) {
+        if (visible == null) return null;
+
+        var found = getDrawingIfOwned(token, drawingId);
+        if (found.isEmpty()) return null;
+
+        Drawing drawing = found.get();
+        try {
+            ObjectNode canvasData = (ObjectNode) objectMapper.readTree(drawing.getCanvasData());
+
+            if (!canvasData.has("layers")) return null;
+
+            ArrayNode layers = (ArrayNode) canvasData.get("layers");
+            for (JsonNode layer : layers) {
+                if (layer.get("id").asText().equals(layerId.toString())) {
+                    ((ObjectNode) layer).put("visible", visible);
+                    drawing.setCanvasData(objectMapper.writeValueAsString(canvasData));
+                    drawingRepository.save(drawing);
+                    logger.info("Layer visibility updated: layerId={} visible={}", layerId, visible);
+                    return parseLayer((ObjectNode) layer);
+                }
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            logger.error("Erro ao atualizar visibilidade", e);
+            return null;
+        }
+    }
+
+    // ── Duplicar Camada (NOVO) ────────────────────────────────────────────────
+    // Copia nome (ou nome desejado), opacidade, visibilidade e todos os frames
+    // (incluindo strokeData). A camada duplicada nunca é locked, e duplicar a
+    // camada de Fundo é bloqueado.
+
+    public LayerDTO duplicateLayer(String token, UUID drawingId, UUID layerId, String desiredName) {
+        var found = getDrawingIfOwned(token, drawingId);
+        if (found.isEmpty()) return null;
+
+        Drawing drawing = found.get();
+        try {
+            ObjectNode canvasData = (ObjectNode) objectMapper.readTree(drawing.getCanvasData());
+
+            if (!canvasData.has("layers")) return null;
+
+            ArrayNode layers = (ArrayNode) canvasData.get("layers");
+            for (JsonNode layerNode : layers) {
+                if (layerNode.get("id").asText().equals(layerId.toString())) {
+                    if (isLocked(layerNode)) {
+                        logger.warn("Tentativa de duplicar camada locked: layerId={} drawingId={}", layerId, drawingId);
+                        return null; // camada de Fundo não pode ser duplicada
+                    }
+
+                    ObjectNode original = (ObjectNode) layerNode;
+                    UUID newLayerId = UUID.randomUUID();
+
+                    String baseName = original.get("name").asText();
+                    String finalName = (desiredName != null && !desiredName.isBlank())
+                            ? desiredName
+                            : baseName + " (cópia)";
+
+                    ObjectNode copia = objectMapper.createObjectNode();
+                    copia.put("id", newLayerId.toString());
+                    copia.put("name", finalName);
+                    copia.put("opacity", original.get("opacity").asDouble());
+                    copia.put("visible", original.get("visible").asBoolean());
+                    copia.put("locked", false);
+
+                    ArrayNode framesCopia = copia.putArray("frames");
+                    if (original.has("frames")) {
+                        for (JsonNode frame : original.get("frames")) {
+                            ObjectNode frameCopia = objectMapper.createObjectNode();
+                            frameCopia.put("id", UUID.randomUUID().toString());
+                            frameCopia.put("index", frame.get("index").asInt());
+                            if (frame.has("duration") && !frame.get("duration").isNull()) {
+                                frameCopia.put("duration", frame.get("duration").asInt());
+                            } else {
+                                frameCopia.putNull("duration");
+                            }
+                            String strokeData = frame.has("strokeData") ? frame.get("strokeData").asText() : "";
+                            frameCopia.put("strokeData", strokeData);
+                            framesCopia.add(frameCopia);
+                        }
+                    }
+
+                    layers.add(copia);
+                    drawing.setCanvasData(objectMapper.writeValueAsString(canvasData));
+                    drawingRepository.save(drawing);
+                    logger.info("Layer duplicated: originalId={} newId={} drawingId={}", layerId, newLayerId, drawingId);
+
+                    return parseLayer(copia);
+                }
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            logger.error("Erro ao duplicar camada", e);
+            return null;
+        }
+    }
+
     // ── Adicionar Frame ───────────────────────────────────────────────────────
+    // Bloqueado para camadas locked (Fundo não recebe frames desenhados).
 
     public FrameDTO addFrame(String token, UUID drawingId, UUID layerId) {
         var found = getDrawingIfOwned(token, drawingId);
@@ -185,6 +311,11 @@ public class LayerService {
             ArrayNode layers = (ArrayNode) canvasData.get("layers");
             for (JsonNode layer : layers) {
                 if (layer.get("id").asText().equals(layerId.toString())) {
+                    if (isLocked(layer)) {
+                        logger.warn("Tentativa de adicionar frame em camada locked: layerId={} drawingId={}", layerId, drawingId);
+                        return null;
+                    }
+
                     ArrayNode frames = (ArrayNode) layer.get("frames");
                     int nextIndex = frames.size();
 
@@ -192,15 +323,15 @@ public class LayerService {
                     ObjectNode newFrame = objectMapper.createObjectNode();
                     newFrame.put("id", frameId.toString());
                     newFrame.put("index", nextIndex);
-                    newFrame.put("duration", 100); // padrão: 100ms
-                    newFrame.put("strokeData", "{}");
+                    newFrame.putNull("duration"); // null = herda o fps global do Drawing
+                    newFrame.put("strokeData", "");
 
                     frames.add(newFrame);
                     drawing.setCanvasData(objectMapper.writeValueAsString(canvasData));
                     drawingRepository.save(drawing);
                     logger.info("Frame added: frameId={} layerId={}", frameId, layerId);
 
-                    return new FrameDTO(frameId, nextIndex, 100, "{}");
+                    return new FrameDTO(frameId, nextIndex, null, "");
                 }
             }
 
@@ -296,11 +427,18 @@ public class LayerService {
         return drawingRepository.findByIdAndOwner(drawingId, user);
     }
 
+    // Camadas antigas (salvas antes desta mudança) podem não ter o campo "locked".
+    // Trata ausência como false, para não travar desenhos já existentes.
+    private boolean isLocked(JsonNode layer) {
+        return layer.has("locked") && layer.get("locked").asBoolean(false);
+    }
+
     private LayerDTO parseLayer(ObjectNode layer) {
         UUID id = UUID.fromString(layer.get("id").asText());
         String name = layer.get("name").asText();
         Double opacity = layer.get("opacity").asDouble();
         Boolean visible = layer.get("visible").asBoolean();
+        Boolean locked = layer.has("locked") && layer.get("locked").asBoolean(false);
 
         List<FrameDTO> frames = new ArrayList<>();
         if (layer.has("frames")) {
@@ -309,14 +447,25 @@ public class LayerService {
             }
         }
 
-        return new LayerDTO(id, name, opacity, visible, frames);
+        return new LayerDTO(id, name, opacity, visible, locked, frames);
     }
 
     private FrameDTO parseFrame(ObjectNode frame) {
         UUID id = UUID.fromString(frame.get("id").asText());
         Integer index = frame.get("index").asInt();
-        Integer duration = frame.get("duration").asInt();
-        String strokeData = frame.get("strokeData").asText();
+        Integer duration = (frame.has("duration") && !frame.get("duration").isNull())
+                ? frame.get("duration").asInt()
+                : null;
+
+        // Compatibilidade retroativa: frames antigos podem ter sido salvos com "imageData"
+        String strokeData;
+        if (frame.has("strokeData")) {
+            strokeData = frame.get("strokeData").asText();
+        } else if (frame.has("imageData")) {
+            strokeData = frame.get("imageData").asText();
+        } else {
+            strokeData = "";
+        }
 
         return new FrameDTO(id, index, duration, strokeData);
     }

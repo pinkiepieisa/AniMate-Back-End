@@ -7,7 +7,8 @@ import lombok.Setter;
 import java.util.List;
 import java.util.UUID;
 
-
+@Getter // <-- ADICIONE AQUI
+@Setter
 @Schema(description = "Representa uma camada em uma animação")
 public class LayerDTO {
 
@@ -24,16 +25,22 @@ public class LayerDTO {
     @Schema(description = "Se a camada está visível")
     private Boolean visible;
 
+    @Schema(description = "Se a camada é fixa/protegida (ex.: camada de Fundo). " +
+            "Camadas locked não podem ser desenhadas, renomeadas, ter a opacidade alterada, " +
+            "duplicadas ou excluídas pelo usuário.")
+    private Boolean locked;
+
     @Schema(description = "Frames que pertencem a esta camada")
     private List<FrameDTO> frames;
 
     public LayerDTO() {}
 
-    public LayerDTO(UUID id, String name, Double opacity, Boolean visible, List<FrameDTO> frames) {
+    public LayerDTO(UUID id, String name, Double opacity, Boolean visible,Boolean locked, List<FrameDTO> frames) {
         this.id = id;
         this.name = name;
         this.opacity = opacity;
         this.visible = visible;
+        this.locked = locked;
         this.frames = frames;
     }
 

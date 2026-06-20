@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DrawingService {
 
     private static final Logger logger = LoggerFactory.getLogger(DrawingService.class);
+    private static final int DEFAULT_FPS = 12;
 
     private final DrawingRepository drawingRepository;
     private final UserService userService;
@@ -116,13 +120,63 @@ public class DrawingService {
 
     // Garante que canvasData nunca seja nulo e que seja JSON válido; em caso de inválido, usa objeto vazio
     private String sanitizeCanvasData(String canvasData) {
-        if (canvasData == null || canvasData.isBlank()) return "{}";
+        ObjectNode root;
+
+        if (canvasData == null || canvasData.isBlank()) {
+            root = objectMapper.createObjectNode();
+        } else {
+            try {
+                root = (ObjectNode) objectMapper.readTree(canvasData);
+            } catch (Exception e) {
+                logger.warn("canvasData inválido, substituindo por objeto vazio", e);
+                root = objectMapper.createObjectNode();
+            }
+        }
+
+        ensureDefaultLayers(root);
+        ensureFps(root);
+
         try {
-            objectMapper.readTree(canvasData);
-            return canvasData;
+            return objectMapper.writeValueAsString(root);
         } catch (Exception e) {
-            logger.warn("canvasData inválido, substituindo por objeto vazio", e);
+            logger.error("Erro ao serializar canvasData sanitizado", e);
             return "{}";
+        }
+    }
+    private void ensureDefaultLayers(ObjectNode root) {
+        boolean precisaCriarPadrao = !root.has("layers")
+                || !root.get("layers").isArray()
+                || root.get("layers").isEmpty();
+
+        if (!precisaCriarPadrao) return;
+
+        ArrayNode layers = root.putArray("layers");
+
+        ObjectNode fundo = objectMapper.createObjectNode();
+        fundo.put("id", UUID.randomUUID().toString());
+        fundo.put("name", "Fundo");
+        fundo.put("opacity", 1.0);
+        fundo.put("visible", true);
+        fundo.put("locked", true);
+        fundo.putArray("frames");
+        layers.add(fundo);
+
+        ObjectNode layer1 = objectMapper.createObjectNode();
+        layer1.put("id", UUID.randomUUID().toString());
+        layer1.put("name", "Layer 1");
+        layer1.put("opacity", 1.0);
+        layer1.put("visible", true);
+        layer1.put("locked", false);
+        layer1.putArray("frames");
+        layers.add(layer1);
+
+        logger.info("Camadas padrão criadas (Fundo + Layer 1) para desenho novo/sem layers");
+    }
+
+    // Garante que o desenho tem um fps definido (usado pela timeline global).
+    private void ensureFps(ObjectNode root) {
+        if (!root.has("fps") || root.get("fps").isNull()) {
+            root.put("fps", DEFAULT_FPS);
         }
     }
 }
